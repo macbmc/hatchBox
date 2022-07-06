@@ -1,6 +1,8 @@
+// ignore_for_file: prefer_const_constructors
 import 'dart:async';
 
-import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:hatch_box/login.dart';
+import 'package:splashscreen/splashscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:hatch_box/Home.dart';
 class Splash extends StatefulWidget {
@@ -13,13 +15,20 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
-    return AnimatedSplashScreen(splash: Center(
-      child: Container(
-        child: Image.asset("assets/—Pngtree—cute panda_643086.png")
-      ),
-    ),
-        backgroundColor: Colors.white,
-        nextScreen: const HomeP()
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SplashScreen(
+          seconds:5,
+          navigateAfterSeconds: MyLogin(),
+          title: Text("Level up your bio",style:TextStyle(
+            fontSize: 18,fontWeight: FontWeight.w300,
+            fontStyle: FontStyle.italic,
+          ),),
+          image: Image.asset('assets/hlogo.jpeg'),
+          photoSize: 190.0,
+          backgroundColor: Colors.white,
+          loaderColor: Colors.blueGrey
+      )
     );
   }
 }
