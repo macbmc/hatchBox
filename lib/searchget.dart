@@ -10,8 +10,16 @@ class DataController extends GetxController{
   }
 
 Future queryData(String queryString) async{
-    return FirebaseFirestore.instance.collection('items').where('category',isGreaterThanOrEqualTo: queryString)
-        .get();
+    return FirebaseFirestore.instance.collection('items').where('category',isGreaterThanOrEqualTo: queryString).get();
 }
   
 }
+
+/*class SearchService{
+  searchbyName(String searchField)
+  {
+    return FirebaseFirestore.instance.collection('items')
+        .where('skey',isEqualTo: searchField.substring(0,1).toUpperCase())
+        .get();
+  }
+}*/

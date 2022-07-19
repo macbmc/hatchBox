@@ -8,6 +8,7 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:hatch_box/inspect.dart';
 import 'package:hatch_box/prof.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hatch_box/search.dart';
 import 'package:hatch_box/searchget.dart';
 import 'package:hatch_box/table.dart';
 
@@ -65,27 +66,18 @@ class HomePP extends StatefulWidget {
 }
 
 class _HomePPState extends State<HomePP> {
-  final TextEditingController searchcontroller = TextEditingController();
-  late QuerySnapshot snapshotdata;
-  bool isExec = false;
+
+  List<String> images=[
+    "assets/Banner 3.jpg",
+    "assets/Banner 1 .jpg",
+     "assets/Banner 2 .jpg",
+  ];
 
   @override
   Widget build(BuildContext context) {
-    /*Widget searchData() {
-      return ListView.builder(
-          itemCount: snapshotdata.docs.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(
-                    snapshotdata.docs[index].data['image']),
-              ),
-              title: Text(snapshotdata.docs[index]['name']),
-              subtitle: Text(snapshotdata.docs[index]['your_price']),
-            );
-          }
-      );
-    }*/
+
+
+
 
     return Scaffold(
         body: SafeArea(
@@ -99,6 +91,9 @@ class _HomePPState extends State<HomePP> {
                     scrollDirection: Axis.vertical,
                     child: Column(
                       children: [
+                        SizedBox(
+                          height: 20,
+                        ),
                         Container(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -122,21 +117,53 @@ class _HomePPState extends State<HomePP> {
                                     fontSize: 25,
                                     color: Color.fromRGBO(0, 0, 139, 1)),
                               ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.logout,
-                                ),
-                                iconSize: 30,
-                                onPressed: () => FirebaseAuth.instance.signOut(),
-                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.search_rounded,
+                                    ),
+                                    iconSize: 30,
+                                    onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                                      return Search();
+                                    }));},
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.logout,
+                                    ),
+                                    iconSize: 30,
+                                    onPressed: () => FirebaseAuth.instance.signOut(),
+                                  ),
+                                ],
+                              )
                             ],
                           ),
                         ),
+
                         SizedBox(
                           height: 40,
                         ),
-
                         Container(
+                          padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0.0),
+                          child: SizedBox(
+                            height: 200,
+                            width: double.infinity,
+                            child: PageView.builder(
+                                itemCount: images.length,
+                                itemBuilder: (context, index) {
+                                  return SizedBox(
+                                    height: 400,
+                                    width: double.infinity,
+                                    child: Image.asset(images[index],
+                                    fit: BoxFit.cover,),
+                                  );
+                                }),
+                          ),
+                        ),
+
+
+                        /*Container(
                           margin: EdgeInsets.only(left: 20.0,right: 20.0),
 
                           decoration: BoxDecoration(
@@ -148,10 +175,15 @@ class _HomePPState extends State<HomePP> {
                             controller: searchcontroller,
                             style: TextStyle(color: Color(0xff4c505b)),
                             decoration: InputDecoration(
-                                suffixIcon: IconButton(
+                                prefixIcon: IconButton(
                                   icon: Icon(
                                     Icons.search_rounded,
                                   ),
+                                  iconSize: 30,
+                                  onPressed: (){},
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(Icons.clear),
                                   iconSize: 30,
                                   onPressed: (){},
                                 ),
@@ -171,10 +203,11 @@ class _HomePPState extends State<HomePP> {
                                 hintStyle: TextStyle(color: Color(0xff4c505b)),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                )),
+                                )
+                            ),
                           ),
-                        ),
-                        /*GetBuilder<DataController>(
+                        ),*/
+                       /* GetBuilder<DataController>(
                           init: DataController(),
                           builder:(val){
                             return IconButton(onPressed:(){val.queryData(searchcontroller.text).then((value){
@@ -183,14 +216,14 @@ class _HomePPState extends State<HomePP> {
                               {
                                 isExec = true;
                               });
-                            });},  icon: Icon(
+                            });
+                              searchData();
+                            },  icon: Icon(
                               Icons.search_rounded,
                             ),);
                           } ,
-                        ),*/
-
-
-
+                        ),
+*/
                         SizedBox(height: 30,),
                         Text("Categories",style: TextStyle(color: Colors.blueGrey,fontSize: 20,fontWeight:FontWeight.bold),),
                         SizedBox(height: 20,),
@@ -273,7 +306,7 @@ class _HomePPState extends State<HomePP> {
                                   width: MediaQuery.of(context).size.width * .2,
                                   height: 80,
                                   child: Center(
-                                    child: Icon(Icons.bedtime_rounded,size: 35,color: Colors.brown),
+                                    child: Icon(Icons.electrical_services_outlined,size: 35,color: Colors.brown),
                                   ),
 
 
@@ -329,6 +362,8 @@ class _HomePPState extends State<HomePP> {
                                 status: "Avaliable"),
                           ],
                         )
+
+
                       ],
                     ),
                   ),
@@ -371,8 +406,8 @@ class Product extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
       child: Stack(children: [
         GestureDetector(
-          onTap: () {
-            /*
+          /*onTap: () {
+            *//*
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => ShowallDetails(
                   Img: ImgPath,
@@ -383,8 +418,11 @@ class Product extends StatelessWidget {
                   Status: status,
                   Item_Category: cat,
                   Description: long_description,
-                )));*/
-          },
+                )));*//*
+          },*/
+          onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){
+    return DetP();
+    }));},
           child: Card(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50.0)),
