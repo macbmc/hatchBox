@@ -1,15 +1,12 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:hatch_box/inspect.dart';
 import 'package:hatch_box/prof.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hatch_box/search.dart';
-import 'package:hatch_box/searchget.dart';
 import 'package:hatch_box/table.dart';
 
 class HomeP extends StatefulWidget {
@@ -72,8 +69,14 @@ class _HomePPState extends State<HomePP> {
     "assets/Banner 1 .jpg",
      "assets/Banner 2 .jpg",
   ];
+  List prod=[];
+
 
   @override
+  void initState(){
+    fetchProducts();
+    super.initState();
+  }
   Widget build(BuildContext context) {
 
 
@@ -135,6 +138,13 @@ class _HomePPState extends State<HomePP> {
                                     iconSize: 30,
                                     onPressed: () => FirebaseAuth.instance.signOut(),
                                   ),
+                                  /*IconButton(
+                                    icon: Icon(
+                                      Icons.shop,
+                                    ),
+                                    iconSize: 30,
+                                    onPressed: () =>print(prod) ,
+                                  ),*/
                                 ],
                               )
                             ],
@@ -163,67 +173,7 @@ class _HomePPState extends State<HomePP> {
                         ),
 
 
-                        /*Container(
-                          margin: EdgeInsets.only(left: 20.0,right: 20.0),
 
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          height: 50,
-                          child: TextField(
-                            controller: searchcontroller,
-                            style: TextStyle(color: Color(0xff4c505b)),
-                            decoration: InputDecoration(
-                                prefixIcon: IconButton(
-                                  icon: Icon(
-                                    Icons.search_rounded,
-                                  ),
-                                  iconSize: 30,
-                                  onPressed: (){},
-                                ),
-                                suffixIcon: IconButton(
-                                  icon: Icon(Icons.clear),
-                                  iconSize: 30,
-                                  onPressed: (){},
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                    color:Colors.white,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                hintText: "Search",
-                                hintStyle: TextStyle(color: Color(0xff4c505b)),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                )
-                            ),
-                          ),
-                        ),*/
-                       /* GetBuilder<DataController>(
-                          init: DataController(),
-                          builder:(val){
-                            return IconButton(onPressed:(){val.queryData(searchcontroller.text).then((value){
-                              snapshotdata = value;
-                              setState(()
-                              {
-                                isExec = true;
-                              });
-                            });
-                              searchData();
-                            },  icon: Icon(
-                              Icons.search_rounded,
-                            ),);
-                          } ,
-                        ),
-*/
                         SizedBox(height: 30,),
                         Text("Categories",style: TextStyle(color: Colors.blueGrey,fontSize: 20,fontWeight:FontWeight.bold),),
                         SizedBox(height: 20,),
@@ -290,9 +240,7 @@ class _HomePPState extends State<HomePP> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                                return DetP();
-                              }));},
+                              onTap: (){},
                               child: Card(
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50.0)),
@@ -322,10 +270,10 @@ class _HomePPState extends State<HomePP> {
                           children: [
                             Product(
                                 ImgPath: "assets/side_table.png",
-                                name: "Table",
-                                discount: "5",
-                                mrp: "599",
-                                your_price: "549",
+                                name: prod[0]["name"].toString(),
+                                discount: prod[0]["discount"].toString(),
+                                mrp: "550",
+                                your_price: prod[0]["your_price"].toString(),
                                 cat: "Furniture",
                                 long_description: "High Quality",
                                 status: "Avaliable"),
@@ -340,7 +288,7 @@ class _HomePPState extends State<HomePP> {
                                 status: "Avaliable"),
                           ],
                         ),
-                        Row(
+                        /*Row(
                           children: [
                             Product(
                                 ImgPath: "assets/table copy.png",
@@ -361,7 +309,7 @@ class _HomePPState extends State<HomePP> {
                                 long_description: "High Quality",
                                 status: "Avaliable"),
                           ],
-                        )
+                        )*/
 
 
                       ],
@@ -373,6 +321,23 @@ class _HomePPState extends State<HomePP> {
           ),
         ),
     );
+  }
+  fetchProducts()async{
+    QuerySnapshot qsn= await FirebaseFirestore.instance.collection("items").get();
+    setState(() {
+      for(int i =0; i< qsn.docs.length;i++){
+        prod.add(
+          {
+            "name":qsn.docs[i]["name"],
+            "imagepath":qsn.docs[i]["image"],
+            "mrp":qsn.docs[i]["mrp"],
+            "discount":qsn.docs[i]["discount"],
+            "your_price":qsn.docs[i]["your_price"],
+            "category":qsn.docs[i]["category"]
+          }
+        );
+      }
+    });
   }
 }
 
@@ -409,7 +374,7 @@ class Product extends StatelessWidget {
           /*onTap: () {
             *//*
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ShowallDetails(
+                builder: (context) => DetP(
                   Img: ImgPath,
                   Name: name,
                   Discount: discount,
@@ -421,7 +386,7 @@ class Product extends StatelessWidget {
                 )));*//*
           },*/
           onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){
-    return DetP();
+    return DetP(ImgPath:ImgPath,name:name ,discount: discount,mrp: mrp,your_price: your_price,);
     }));},
           child: Card(
             shape: RoundedRectangleBorder(

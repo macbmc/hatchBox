@@ -2,17 +2,45 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hatch_box/Home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hatch_box/update.dart';
 class DetP extends StatefulWidget {
-  const DetP({Key? key}) : super(key: key);
-
+  const DetP({Key? key,required this.ImgPath,
+    required this.name,
+    required this.discount,
+    required this.mrp,
+    required this.your_price,}) : super(key: key);
+  final String ImgPath, name,discount,mrp,your_price;
   @override
   State<DetP> createState() => _DetPState();
 }
 
 class _DetPState extends State<DetP> {
   final user = FirebaseAuth.instance.currentUser!;
-
+  Future addtoCart()async{
+    var currentuser = FirebaseAuth.instance.currentUser;
+    CollectionReference _collectionref = FirebaseFirestore.instance.collection("user-cart");
+    return _collectionref.doc(currentuser!.email).collection("prod").doc()
+        .set({
+      "prod_name":widget.name,
+      "price":widget.your_price,
+      "image":widget.ImgPath,
+      "discount":widget.discount,
+      "mrp":widget.mrp
+    }).then((value) => print("Added to cart "));
+  }
+  Future addtoWishlist()async{
+    var currentuser = FirebaseAuth.instance.currentUser;
+    CollectionReference _collectionref = FirebaseFirestore.instance.collection("user-wishlist");
+    return _collectionref.doc(currentuser!.email).collection("item").doc()
+        .set({
+      "prod_name":widget.name,
+      "price":widget.your_price,
+      "image":widget.ImgPath,
+      "discount":widget.discount,
+      "mrp":widget.mrp
+    }).then((value) => print("Added to wishlist"));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,11 +62,8 @@ class _DetPState extends State<DetP> {
                         iconSize: 25,
                         color: Colors.brown,),
 
-                      TextButton(onPressed:(){}, child: Container(decoration: BoxDecoration(
-                        color: Colors.white,
-                        //color: Color.fromRGBO(220, 212, 220, 5),
-                        borderRadius:  BorderRadius.all(Radius.circular(40)),
-                      ),height:30,width: 100,child: Center(child: Text("Add to Wishlist",style: TextStyle(color: Colors.purple),))))
+                     IconButton(onPressed: ()=>addtoCart(), icon: Icon(Icons.shopping_cart)),
+                      IconButton(onPressed: ()=>addtoWishlist(), icon: Icon(Icons.favorite_border_sharp)),
                     ],
                   ),
                   Container(
@@ -62,29 +87,36 @@ class _DetPState extends State<DetP> {
                     ),
 
                   ),
-
                   Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white60,
-                      //color: Color.fromRGBO(220, 212, 220, 5),
-                      borderRadius:  BorderRadius.only(topRight: Radius.circular(10),topLeft:Radius.circular(10) ),
+                    height: 1,
+                    width: MediaQuery.of(context).size.width,
+                    color: Colors.blueGrey,
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(left: 20.0,right: 40),
+                    color: Colors.white,
+                    height: MediaQuery.of(context).size.height/9.5,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("${widget.your_price}",style: TextStyle(fontSize: 20),),
+                        ElevatedButton(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                  side: BorderSide(
+                                    color: Colors.teal,
+                                    width: 2.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onPressed:(){}, child: Text("Checkout",style: TextStyle(fontSize: 20),)),
+                      ],
                     ),
-                      height: 80,
-                      width:MediaQuery.of(context).size.width,
+                  )
 
-                      child: Container(
-                        padding: EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Rs24.5",style: TextStyle(fontSize: 20),),
-                            ElevatedButton(onPressed:(){}, child: Text("Checkout")),
-                            ElevatedButton(onPressed:(){}, child: Icon(Icons.shopping_cart)),
-
-                          ],
-                        ),
-                      ),
-                    ),
 
                 ],
               ),
@@ -93,3 +125,17 @@ class _DetPState extends State<DetP> {
     );
   }
 }
+
+/*
+Container(
+padding: EdgeInsets.all(8.0),
+child: Row(
+mainAxisAlignment: MainAxisAlignment.spaceBetween,
+children: [
+Text("Rs24.5",style: TextStyle(fontSize: 20),),
+ElevatedButton(onPressed:(){}, child: Text("Checkout")),
+ElevatedButton(onPressed:(){}, child: Icon(Icons.shopping_cart)),
+
+],
+),
+),*/

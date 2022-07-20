@@ -21,33 +21,35 @@ class _SearchState extends State<Search> {
   final TextEditingController searchcontroller = TextEditingController();
    QuerySnapshot? snapshotdata;
   bool isExec = false;
-
+  late final String ImgPath, name,discount,mrp,your_price;
 
   @override
   Widget build(BuildContext context) {
     Widget searchData() {
       return SizedBox(
-        child: GestureDetector(
-          onTap: (){
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) {
-              return DetP();
-            }));
-          },
-          child: ListView.builder(
+        child: ListView.builder(
                 itemCount: snapshotdata!.docs.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          snapshotdata!.docs[index]['image'].toString()),
+                  return GestureDetector(
+                    onTap: (){
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return DetP(ImgPath:snapshotdata!.docs[index]['image'].toString(),discount:snapshotdata!.docs[index]['discount'].toString(),mrp: snapshotdata!.docs[index]['mrp'].toString(),
+                          name: snapshotdata!.docs[index]['name'].toString(),your_price: snapshotdata!.docs[index]['your_price'].toString(),);
+                      }));
+                    },
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            snapshotdata!.docs[index]['image'].toString()),
+                      ),
+                      title: Text(snapshotdata!.docs[index]['name'].toString()),
+                      subtitle: Text(snapshotdata!.docs[index]['your_price'].toString()),
                     ),
-                    title: Text(snapshotdata!.docs[index]['name'].toString()),
-                    subtitle: Text(snapshotdata!.docs[index]['your_price'].toString()),
                   );
                 }
             ),
-        ),
+
       );
 
     }
