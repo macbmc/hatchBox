@@ -9,8 +9,8 @@ class DetP extends StatefulWidget {
     required this.name,
     required this.discount,
     required this.mrp,
-    required this.your_price,}) : super(key: key);
-  final String ImgPath, name,discount,mrp,your_price;
+    required this.your_price, required this.ls}) : super(key: key);
+  final String ImgPath, name,discount,mrp,your_price,ls;
   @override
   State<DetP> createState() => _DetPState();
 }
@@ -53,7 +53,8 @@ class _DetPState extends State<DetP> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      IconButton(onPressed:(){Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                      IconButton(onPressed:(){
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context){
                         return HomeP();
                       }));},
                         icon:Icon(
@@ -69,23 +70,30 @@ class _DetPState extends State<DetP> {
                   Container(
                     //color: Color.fromRGBO(220, 212, 220, 5),
                     height: MediaQuery.of(context).size.height/3.5,
+                    width: MediaQuery.of(context).size.width/1.2,
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: Colors.white,
                     ),
-                    child: Image.asset("assets/hlogo.jpeg"),
+                    child: Image.network(
+                      widget.ImgPath,
+                      fit: BoxFit.fitWidth,
+                      width: 200,
+                      height: 95,
+                    ),
                   ),
                   SizedBox(height: 30,),
                   Container(
                     padding: EdgeInsets.all(10),
                     height: MediaQuery.of(context).size.height/2.5,
+                    width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       //color: Color.fromRGBO(220, 212, 220, 5),
                       borderRadius:  BorderRadius.only(topRight: Radius.circular(40)),
                     ),
-
+                   child: Text("${widget.ls}"),
                   ),
                   Container(
                     height: 1,

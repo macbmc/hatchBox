@@ -35,7 +35,7 @@ class _SearchState extends State<Search> {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
                         return DetP(ImgPath:snapshotdata!.docs[index]['image'].toString(),discount:snapshotdata!.docs[index]['discount'].toString(),mrp: snapshotdata!.docs[index]['mrp'].toString(),
-                          name: snapshotdata!.docs[index]['name'].toString(),your_price: snapshotdata!.docs[index]['your_price'].toString(),);
+                          name: snapshotdata!.docs[index]['name'].toString(),your_price: snapshotdata!.docs[index]['your_price'].toString(),ls: snapshotdata!.docs[index]['ls'].toString(),);
                       }));
                     },
                     child: ListTile(

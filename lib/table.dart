@@ -1,59 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hatch_box/Home.dart';
+import 'package:hatch_box/cart.dart';
+import 'package:hatch_box/messages.dart';
 import 'package:hatch_box/prof.dart';
-class TableP extends StatefulWidget {
-  const TableP({Key? key}) : super(key: key);
+import 'package:hatch_box/wishlist.dart';
 
-  @override
-  State<TableP> createState() => _TablePState();
-}
-
-class _TablePState extends State<TableP> {
-
-  final user = FirebaseAuth.instance.currentUser!;
-  int sindex=0;
-
-  void _navbar(int index){
-    setState((){
-      sindex = index;
-    });
-  }
-  final List<Widget> screens =[
-    TablePP(),
-    ProfP(),
-    ProfP(),
-    ProfP(),
-    ProfP(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        fixedColor: Colors.brown,
-        onTap:_navbar,
-        elevation: 0,
-        backgroundColor:Color.fromRGBO(220, 212, 220, 5),
-        currentIndex: sindex,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home),label:"Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.message_rounded),label:"Messages"),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite),label:""),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart),label:"Cart"),
-          BottomNavigationBarItem(icon: Icon(Icons.person),label:"Profile"),
-        ],
-      ),
-      body: screens[sindex],
-
-    );
-  }
-} 
 
 class TablePP extends StatefulWidget {
-  const TablePP({Key? key}) : super(key: key);
-
+  const TablePP({Key? key,required this.category}) : super(key: key);
+ final String category;
   @override
   State<TablePP> createState() => _TablePPState();
 }
@@ -67,7 +24,6 @@ class _TablePPState extends State<TablePP> {
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
-           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(height: 20,),
             Row(
@@ -81,99 +37,40 @@ class _TablePPState extends State<TablePP> {
                 ),
                 iconSize: 25,
                 color: Colors.brown,),
-              Text("Products",style: TextStyle(fontSize: 23,),),
-              IconButton(onPressed:(){},color: Colors.brown, icon:Icon(Icons.power_settings_new,size: 25,),)
+              Text("PRODUCTS",style: TextStyle(fontSize: 23,fontWeight: FontWeight.bold,color: Colors.purple),),
+              IconButton(onPressed:(){},color: Colors.brown, icon:Icon(Icons.shopping_cart,size: 25,),)
             ],
           ),
               SizedBox(height: 20,),
-              Row(
-                children: [
-                  Product(
-                      ImgPath: "assets/side_table.png",
-                      name: "Table",
-                      discount: "5",
-                      mrp: "599",
-                      your_price: "549",
-                      cat: "Furniture",
-                      long_description: "High Quality",
-                      status: "Avaliable"),
-                  Product(
-                      ImgPath: "assets/chair.png",
-                      name: "Chair",
-                      discount: "5",
-                      mrp: "599",
-                      your_price: "549",
-                      cat: "Furniture",
-                      long_description: "High Quality",
-                      status: "Avaliable"),
-                ],
-              ),
-              Row(
-                children: [
-                  Product(
-                      ImgPath: "assets/side_table.png",
-                      name: "Table",
-                      discount: "5",
-                      mrp: "599",
-                      your_price: "549",
-                      cat: "Furniture",
-                      long_description: "High Quality",
-                      status: "Avaliable"),
-                  Product(
-                      ImgPath: "assets/chair.png",
-                      name: "Chair",
-                      discount: "5",
-                      mrp: "599",
-                      your_price: "549",
-                      cat: "Furniture",
-                      long_description: "High Quality",
-                      status: "Avaliable"),
-                ],
-              ),
-              Row(
-                children: [
-                  Product(
-                      ImgPath: "assets/side_table.png",
-                      name: "Table",
-                      discount: "5",
-                      mrp: "599",
-                      your_price: "549",
-                      cat: "Furniture",
-                      long_description: "High Quality",
-                      status: "Avaliable"),
-                  Product(
-                      ImgPath: "assets/chair.png",
-                      name: "Chair",
-                      discount: "5",
-                      mrp: "599",
-                      your_price: "549",
-                      cat: "Furniture",
-                      long_description: "High Quality",
-                      status: "Avaliable"),
-                ],
-              ),
-              Row(
-                children: [
-                  Product(
-                      ImgPath: "assets/side_table.png",
-                      name: "Table",
-                      discount: "5",
-                      mrp: "599",
-                      your_price: "549",
-                      cat: "Furniture",
-                      long_description: "High Quality",
-                      status: "Avaliable"),
-                  Product(
-                      ImgPath: "assets/chair.png",
-                      name: "Chair",
-                      discount: "5",
-                      mrp: "599",
-                      your_price: "549",
-                      cat: "Furniture",
-                      long_description: "High Quality",
-                      status: "Avaliable"),
-                ],
-              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height*2,
+                width:  MediaQuery.of(context).size.width,
+                child: StreamBuilder(
+                    stream: FirebaseFirestore.instance.collection('items').where('category',isEqualTo:widget.category).snapshots(),
+                    builder: (BuildContext context,AsyncSnapshot <QuerySnapshot> snapshot){
+                      if(snapshot.hasError)
+                      {
+                        return Text("Some Unknown Error has occured please try again");
+                      }
+                      return ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (_,index){
+                          DocumentSnapshot _snap=snapshot.data!.docs[index];
+                          return Product(ImgPath:_snap['image'].toString(),
+                              name:_snap['name'].toString(),
+                              discount: _snap['discount'].toString(),
+                              mrp: _snap['mrp'].toString(),
+                              your_price: _snap['your_price'].toString(),
+                              cat: _snap['category'].toString(),
+                              long_description: _snap['ls'].toString(),
+                              status: _snap['status'].toString()
+                          );
+                        },
+                      );
+                    }
+                ),
+              )
+
           ]
           ),
         )
