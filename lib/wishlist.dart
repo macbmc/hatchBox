@@ -13,31 +13,39 @@ class Wishlist extends StatefulWidget {
 }
 
 class _WishlistState extends State<Wishlist> {
-  List wishitem=[];
   @override
-  void initState(){
-    fetchWishlistProducts();
-    super.initState();
-  }
+
+
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      body: SafeArea(
+          child: StreamBuilder(
+            stream:FirebaseFirestore.instance.collection("user-wishlist").doc(FirebaseAuth.instance
+                .currentUser!.email).collection("item").snapshots(),
+            builder: (BuildContext context,AsyncSnapshot <QuerySnapshot> snapshot){
+              if(snapshot.hasError)
+              {
+                return Center(child: Text("Ntho Evdyo oru Prashnm"),);
+              }
+              return ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (_,index){
+                    DocumentSnapshot _docsnap= snapshot.data!.docs[index];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            _docsnap['image'].toString()),
+                      ),
+                      trailing: Text(_docsnap["mrp"].toString()),
+                      title: Text(_docsnap["prod_name"].toString()),
+                    );
+                  }
+              );
+            },
+          )
+      ),
+    );
   }
-  fetchWishlistProducts()async{
-    QuerySnapshot qsn= await FirebaseFirestore.instance.collection("user-cart")
-        .doc(FirebaseAuth.instance.currentUser!.email).collection("prod").get();
-    setState(() {
-      for(int i =0; i< qsn.docs.length;i++){
-        wishitem.add(
-            {
-              "name":qsn.docs[i]["name"],
-              "imagepath":qsn.docs[i]["image"],
-              "mrp":qsn.docs[i]["mrp"],
-              "discount":qsn.docs[i]["discount"],
-              "your_price":qsn.docs[i]["your_price"],
-              "category":qsn.docs[i]["category"]
-            }
-        );
-      }
-    });
-  }
+
+
 }

@@ -3,11 +3,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hatch_box/cart.dart';
 import 'package:hatch_box/inspect.dart';
+import 'package:hatch_box/messages.dart';
 import 'package:hatch_box/prof.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hatch_box/search.dart';
 import 'package:hatch_box/table.dart';
+import 'package:hatch_box/wishlist.dart';
 
 class HomeP extends StatefulWidget {
   const HomeP({Key? key}) : super(key: key);
@@ -27,9 +30,9 @@ class _HomePState extends State<HomeP> {
   }
   final List<Widget> screens =[
     HomePP(),
-    ProfP(),
-    ProfP(),
-    ProfP(),
+    Messages(),
+    Wishlist(),
+    Cart(),
     ProfP(),
   ];
 
@@ -269,7 +272,7 @@ class _HomePPState extends State<HomePP> {
                         Row(
                           children: [
                             Product(
-                                ImgPath: "assets/side_table.png",
+                                ImgPath: prod[0]["image"].toString(),
                                 name: prod[0]["name"].toString(),
                                 discount: prod[0]["discount"].toString(),
                                 mrp: "550",
@@ -278,11 +281,11 @@ class _HomePPState extends State<HomePP> {
                                 long_description: "High Quality",
                                 status: "Avaliable"),
                             Product(
-                                ImgPath: "assets/chair.png",
-                                name: "Chair",
-                                discount: "5",
-                                mrp: "599",
-                                your_price: "549",
+                                ImgPath: prod[1]["image"].toString(),
+                                name: prod[1]["name"].toString(),
+                                discount: prod[1]["discount"].toString(),
+                                mrp: "550",
+                                your_price: prod[1]["your_price"].toString(),
                                 cat: "Furniture",
                                 long_description: "High Quality",
                                 status: "Avaliable"),

@@ -102,7 +102,7 @@ class _ProfPState extends State<ProfP> {
                     Container(
                       width: 500,
                       height: 1,
-                      color: Colors.yellow,
+                      color: Colors.white,
                     ),
                     GestureDetector(
                       onTap: (){},
@@ -173,7 +173,7 @@ class _ProfPState extends State<ProfP> {
                     Container(
                       width: 500,
                       height: 1,
-                      color: Colors.yellow,
+                      color: Colors.white,
                     ),
                     GestureDetector(
                       onTap: (){},
